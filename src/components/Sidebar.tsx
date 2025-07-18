@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { 
   LayoutDashboard, 
   CreditCard, 
@@ -11,6 +12,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { SettingsModal } from './SettingsModal';
 import clsx from 'clsx';
 
 const navItems = [
@@ -24,6 +26,7 @@ export function Sidebar() {
   const { state, dispatch } = useApp();
   const { theme, toggleTheme } = useTheme();
   const { state: authState, logout } = useAuth();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <div className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-full flex flex-col">
@@ -72,7 +75,6 @@ export function Sidebar() {
               <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {authState.user?.name || 'User'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Free Plan</p>
             </div>
           </div>
           
@@ -88,6 +90,7 @@ export function Sidebar() {
               )}
             </button>
             
+              onClick={() => setIsSettingsOpen(true)}
             <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <Settings className="w-4 h-4 text-gray-600 dark:text-gray-300" />
             </button>
@@ -102,6 +105,11 @@ export function Sidebar() {
           </div>
         </div>
       </div>
+      
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </div>
   );
 }
