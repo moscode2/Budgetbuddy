@@ -65,7 +65,10 @@ export function Sidebar() {
       
       <div className="p-6 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="flex items-center space-x-3 flex-1 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+          >
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold">
                 {authState.user?.name?.charAt(0).toUpperCase() || 'U'}
@@ -76,7 +79,7 @@ export function Sidebar() {
                 {authState.user?.name || 'User'}
               </p>
             </div>
-          </div>
+          </button>
           
           <div className="flex items-center space-x-2">
             <button
@@ -88,11 +91,6 @@ export function Sidebar() {
               ) : (
                 <Sun className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               )}
-            </button>
-            
-              onClick={() => setIsSettingsOpen(true)}
-            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              <Settings className="w-4 h-4 text-gray-600 dark:text-gray-300" />
             </button>
             
             <button
