@@ -27,7 +27,12 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  totalIncome: number;
-  totalExpenses: number;
-  netSavings: number;
+  created_at?: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
 }

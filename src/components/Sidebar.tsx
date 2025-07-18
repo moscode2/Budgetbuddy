@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import clsx from 'clsx';
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
 export function Sidebar() {
   const { state, dispatch } = useApp();
   const { theme, toggleTheme } = useTheme();
+  const { state: authState, logout } = useAuth();
 
   return (
     <div className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-full flex flex-col">
@@ -62,10 +64,14 @@ export function Sidebar() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold">JD</span>
+              <span className="text-white font-semibold">
+                {authState.user?.name?.charAt(0).toUpperCase() || 'U'}
+              </span>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {authState.user?.name || 'User'}
+              </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Free Plan</p>
             </div>
           </div>
@@ -84,6 +90,14 @@ export function Sidebar() {
             
             <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <Settings className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </button>
+            
+            <button
+              onClick={logout}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              title="Logout"
+            >
+              <span className="text-xs text-gray-600 dark:text-gray-300">↗</span>
             </button>
           </div>
         </div>

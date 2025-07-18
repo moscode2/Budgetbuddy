@@ -1,6 +1,8 @@
 import React from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthForm } from './components/AuthForm';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { Transactions } from './components/Transactions';
@@ -9,7 +11,12 @@ import { Analytics } from './components/Analytics';
 import { useApp } from './context/AppContext';
 
 function AppContent() {
+  const { state: authState } = useAuth();
   const { state } = useApp();
+
+  if (!authState.isAuthenticated) {
+    return <AuthForm />;
+  }
 
   const renderCurrentView = () => {
     switch (state.currentView) {
@@ -41,9 +48,11 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AppProvider>
-        <AppContent />
-      </AppProvider>
+      <AuthProvider>
+        <AppProvider>
+          <AppContent />
+        </AppProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
