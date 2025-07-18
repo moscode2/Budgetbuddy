@@ -5,9 +5,9 @@ import {
   CreditCard, 
   PiggyBank, 
   BarChart3, 
-  Settings,
   Moon,
-  Sun
+  Sun,
+  LogOut
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
@@ -27,6 +27,16 @@ export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
   const { state: authState, logout } = useAuth();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    // Add a small delay to show the loading state
+    setTimeout(() => {
+      logout();
+      setIsLoggingOut(false);
+    }, 800);
+  };
 
   return (
     <div className="w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-full flex flex-col">
@@ -94,14 +104,25 @@ export function Sidebar() {
             </button>
             
             <button
-              onClick={logout}
+              onClick={handleLogout}
+              disabled={isLoggingOut}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               title="Logout"
             >
-              <span className="text-xs text-gray-600 dark:text-gray-300">↗</span>
+              {isLoggingOut ? (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <LogOut className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              )}
             </button>
           </div>
         </div>
+        
+        {isLoggingOut && (
+          <div className="mt-3 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Logging out...</p>
+          </div>
+        )}
       </div>
       
       <SettingsModal 
