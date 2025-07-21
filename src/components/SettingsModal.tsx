@@ -410,7 +410,16 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium">{label}</span>
-                </button>
+                <button 
+                  className="p-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 transition-colors"
+                  onClick={() => {
+                    // Auto theme based on system preference
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if ((systemPrefersDark && theme === 'light') || (!systemPrefersDark && theme === 'dark')) {
+                      toggleTheme();
+                    }
+                  }}
+                >
               ))}
             </nav>
           </div>

@@ -8,6 +8,9 @@ import { Dashboard } from './components/Dashboard';
 import { Transactions } from './components/Transactions';
 import { Budgets } from './components/Budgets';
 import { Analytics } from './components/Analytics';
+import { CalendarView } from './components/CalendarView';
+import { AISummary } from './components/AISummary';
+import { BudgetAlerts } from './components/BudgetAlerts';
 import { useApp } from './context/AppContext';
 
 function AppContent() {
@@ -28,6 +31,12 @@ function AppContent() {
         return <Budgets />;
       case 'analytics':
         return <Analytics />;
+      case 'calendar':
+        return <CalendarView />;
+      case 'ai-summary':
+        return <AISummary />;
+      case 'alerts':
+        return <BudgetAlerts />;
       default:
         return <Dashboard />;
     }

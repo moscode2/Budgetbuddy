@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface AppState {
   transactions: Transaction[];
   budgets: Budget[];
-  currentView: 'dashboard' | 'transactions' | 'budgets' | 'analytics';
+  currentView: 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'calendar' | 'ai-summary' | 'alerts';
 }
 
 type AppAction =

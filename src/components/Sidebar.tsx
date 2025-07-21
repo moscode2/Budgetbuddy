@@ -5,6 +5,9 @@ import {
   CreditCard, 
   PiggyBank, 
   BarChart3, 
+  Calendar,
+  Brain,
+  Bell,
   Moon,
   Sun,
   LogOut
@@ -20,6 +23,9 @@ const navItems = [
   { id: 'transactions', label: 'Transactions', icon: CreditCard },
   { id: 'budgets', label: 'Budgets', icon: PiggyBank },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'calendar', label: 'Calendar', icon: Calendar },
+  { id: 'ai-summary', label: 'AI Summary', icon: Brain },
+  { id: 'alerts', label: 'Budget Alerts', icon: Bell },
 ] as const;
 
 export function Sidebar() {
