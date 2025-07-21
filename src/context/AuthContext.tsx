@@ -5,6 +5,8 @@ interface AuthContextType {
   state: AuthState;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
+  updateProfile: (name: string, email: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   logout: () => void;
 }
 
@@ -119,6 +121,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (name: string, email: string) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      // In a real app, this would call your profile update API
+      if (name && email) {
+        const updatedUser: User = {
+          ...state.user!,
+          name: name,
+          email: email,
+        };
+        
+        // Update stored data
+        localStorage.setItem('user_data', JSON.stringify(updatedUser));
+        
+        dispatch({ type: 'SET_USER', payload: updatedUser });
+      } else {
+        throw new Error('Name and email are required');
+      }
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Profile update failed' });
+      throw error;
+    }
+  };
+
+  const deleteAccount = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      // In a real app, this would call your account deletion API
+      // Clear all user data
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+      
+      dispatch({ type: 'SET_USER', payload: null });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Account deletion failed' });
+      throw error;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_data');
@@ -126,7 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ state, login, register, logout }}>
+    <AuthContext.Provider value={{ state, login, register, updateProfile, deleteAccount, logout }}>
       {children}
     </AuthContext.Provider>
   );
