@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -9,10 +10,12 @@ import {
 } from 'lucide-react';
 import { StatCard } from './StatCard';
 import { useApp } from '../context/AppContext';
+import { TransactionForm } from './TransactionForm';
 import { format } from 'date-fns';
 
 export function Dashboard() {
   const { state } = useApp();
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   
   const totalIncome = state.transactions
     .filter(t => t.type === 'income')
@@ -39,7 +42,10 @@ export function Dashboard() {
             Welcome back! Here's your financial overview.
           </p>
         </div>
-        <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl flex items-center space-x-2 transition-colors">
+        <button 
+          onClick={() => setIsQuickAddOpen(true)}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl flex items-center space-x-2 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>Quick Add</span>
         </button>
@@ -96,6 +102,11 @@ export function Dashboard() {
           </div>
         </div>
       )}
+      
+      <TransactionForm
+        isOpen={isQuickAddOpen}
+        onClose={() => setIsQuickAddOpen(false)}
+      />
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
