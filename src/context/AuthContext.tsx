@@ -69,24 +69,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // In a real app, this would call your authentication API
-      // For demo purposes, we'll simulate the login
-      if (email && password) {
-        const user: User = {
-          id: '1',
-          name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
-          email: email,
-          created_at: new Date().toISOString()
-        };
-        
-        // Store auth data
-        localStorage.setItem('auth_token', 'demo_token_' + Date.now());
-        localStorage.setItem('user_data', JSON.stringify(user));
-        
-        dispatch({ type: 'SET_USER', payload: user });
-      } else {
-        throw new Error('Invalid credentials');
+      // Check if user exists in registered users
+      const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const user = registeredUsers.find((u: User) => u.email === email);
+      
+      if (!user) {
+        throw new Error('No account found with this email. Please create an account first.');
       }
+      
+      // In a real app, you would verify the password hash
+      // For this demo, we'll check if the user has a stored password
+      const storedPassword = localStorage.getItem(`password_${user.id}`);
+      if (!storedPassword || storedPassword !== password) {
+        throw new Error('Invalid password. Please check your credentials.');
+      }
+      
+      // Store auth data
+      localStorage.setItem('auth_token', 'token_' + user.id + '_' + Date.now());
+      localStorage.setItem('user_data', JSON.stringify(user));
+      
+      dispatch({ type: 'SET_USER', payload: user });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Login failed' });
       throw error;
@@ -97,30 +99,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // In a real app, this would call your registration API
-      // For demo purposes, we'll simulate the registration
-      if (name && email && password) {
-        const user: User = {
-          id: Date.now().toString(),
-          name: name,
-          email: email,
-          created_at: new Date().toISOString()
-        };
-        
-        // Store auth data
-        localStorage.setItem('auth_token', 'demo_token_' + Date.now());
-        localStorage.setItem('user_data', JSON.stringify(user));
-        
-        dispatch({ type: 'SET_USER', payload: user });
-      } else {
-        throw new Error('All fields are required');
+      // Validate input
+      if (!name.trim()) {
+        throw new Error('Name is required');
       }
+      if (!email.trim()) {
+        throw new Error('Email is required');
+      }
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters long');
+      }
+      
+      // Check if user already exists
+      const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const existingUser = registeredUsers.find((u: User) => u.email === email);
+      
+      if (existingUser) {
+        throw new Error('An account with this email already exists. Please login instead.');
+      }
+      
+      // Create new user
+      const newUser: User = {
+        id: Date.now().toString(),
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        created_at: new Date().toISOString()
+      };
+      
+      // Store user in registered users list
+      const updatedUsers = [...registeredUsers, newUser];
+      localStorage.setItem('registered_users', JSON.stringify(updatedUsers));
+      
+      // Store password separately (in a real app, this would be hashed)
+      localStorage.setItem(`password_${newUser.id}`, password);
+      
+      // Store auth data
+      localStorage.setItem('auth_token', 'token_' + newUser.id + '_' + Date.now());
+      localStorage.setItem('user_data', JSON.stringify(newUser));
+      
+      dispatch({ type: 'SET_USER', payload: newUser });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Registration failed' });
       throw error;
     }
   };
-
   const updateProfile = async (name: string, email: string) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
@@ -150,8 +172,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // In a real app, this would call your account deletion API
-      // Clear all user data
+      if (!state.user) {
+        throw new Error('No user to delete');
+      }
+      
+      // Remove user from registered users list
+      const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
+      const updatedUsers = registeredUsers.filter((u: User) => u.id !== state.user!.id);
+      localStorage.setItem('registered_users', JSON.stringify(updatedUsers));
+      
+      // Remove user's password
+      localStorage.removeItem(`password_${state.user.id}`);
+      
+      // Clear current session
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user_data');
       
