@@ -143,6 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
   };
+
   const updateProfile = async (name: string, email: string) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
@@ -172,19 +173,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      if (!state.user) {
-        throw new Error('No user to delete');
-      }
-      
-      // Remove user from registered users list
-      const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
-      const updatedUsers = registeredUsers.filter((u: User) => u.id !== state.user!.id);
-      localStorage.setItem('registered_users', JSON.stringify(updatedUsers));
-      
-      // Remove user's password
-      localStorage.removeItem(`password_${state.user.id}`);
-      
-      // Clear current session
+      // In a real app, this would call your account deletion API
+      // Clear all user data
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user_data');
       
