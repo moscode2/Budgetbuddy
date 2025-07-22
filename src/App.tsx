@@ -17,6 +17,19 @@ function AppContent() {
   const { state: authState } = useAuth();
   const { state } = useApp();
 
+  // Show loading state while checking authentication
+  if (authState.isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
   if (!authState.isAuthenticated) {
     return <AuthForm />;
   }
